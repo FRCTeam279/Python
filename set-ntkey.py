@@ -13,6 +13,7 @@ parser = argparse.ArgumentParser(description='Set the value of a variable on the
 parser.add_argument('key')
 parser.add_argument('value')
 parser.add_argument('-d', '--debug', action='store_true')
+parser.add_argument('-p', '--persistent', action='store_true')
 parser.add_argument('-s', '--server', default='10.2.79.2')
 parser.add_argument('-nt', '--table', default='Preferences')
 
@@ -43,16 +44,36 @@ NetworkTables.initialize(server=str(args.server))
 while NetworkTables.isConnected() == False:
     time.sleep(0.1)
 
-	
 nt = NetworkTables.getTable(str(args.table))
+
+setPersist = False
+if str(args.table) == 'Preferences':
+	setPersist = True
+else:
+	if nt.containsKey(str(args.key)):
+		if nt.isPersistent(str(args.key)):
+			setPersist = True
+
+if setPersist:
+	nt.clearPersistent(str(args.key))
+	
+
 res = nt.putValue(str(args.key), args.value)
+
+if args.persistent:
+	nt.setPersistent(str(args.key))
+	
+	
 NetworkTables.flush()
 val = nt.getValue(str(args.key))
+
+
 if val:
 	print("Value set: " + str(args.table) + "/" + str(args.key) + " = " + str(val))
 else: 
 	print("Error - did not set key correctly!")
 
+	
 NetworkTables.shutdown()
 
 
