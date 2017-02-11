@@ -49,7 +49,7 @@ res = nt.putValue(str(args.key), args.value)
 NetworkTables.flush()
 val = nt.getValue(str(args.key))
 if val:
-	print("Value set: " + str(args.table) + "/" + str(args.key) + " = " + val)
+	print("Value set: " + str(args.table) + "/" + str(args.key) + " = " + str(val))
 else: 
 	print("Error - did not set key correctly!")
 
